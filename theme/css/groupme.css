@@ -1,0 +1,41 @@
+slide hgroup h3 {
+  color: #999;
+}
+
+slide article h3 {
+  font-weight: bold;
+}
+
+slide article.centered {
+  text-align: center;
+}
+
+slide#in-the-beginning div.build {
+  margin-top: 130px;
+  text-align: center;
+}
+
+img#groupme-logo {
+  display: inline-block;
+}
+
+img#heroku-logo {
+  display: inline-block;
+  margin-bottom: 40px;
+}
+
+span.disclaimer {
+  color: gray;
+  font-size: 75%;
+}
+
+slide.dark aside.note {
+  color: #666;
+  line-height: 30px;
+}
+
+slide#peace p a {
+  border-bottom-color: #666;
+  color: #999;
+  font-size: 85%;
+}

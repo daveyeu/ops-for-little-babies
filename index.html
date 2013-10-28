@@ -1,0 +1,400 @@
+<!--
+Google IO 2012/2013 HTML5 Slide Template
+
+Authors: Eric Bidelman <ebidel@gmail.com>
+         Luke Mahé <lukem@google.com>
+
+URL: https://code.google.com/p/io-2012-slides
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">-->
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <!--This one seems to work all the time, but really small on ipad-->
+  <!--<meta name="viewport" content="initial-scale=0.4">-->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" media="all" href="theme/css/default.css">
+  <link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="theme/css/phone.css">
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->
+  <script data-main="js/slides" src="js/require-1.0.8.min.js"></script>
+</head>
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="logoslide nobackground">
+    <article class="flexbox vcenter">
+      <span><img src="images/groupme_horizontal.png"></span>
+    </article>
+  </slide>
+
+  <slide class="title-slide segue nobackground">
+    <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+    </hgroup>
+  </slide>
+
+  <slide id="in-the-beginning">
+    <article>
+      <div class="build">
+        <img id="groupme-logo" src="images/poundie.png" width="256px" height="296px">
+        <img id="heroku-logo" src="images/heroku.jpeg">
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Growing with Heroku</h2>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Forking &amp; following databases</li>
+        <li>Procfile</li>
+        <li>Polyglot</li>
+        <li>Logplex</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide class="segue dark quote nobackground">
+    <aside class="note">
+      <section>
+        <p>
+          Ultimately, I don't believe that GroupMe could have moved so
+          rapidly in the beginning without Heroku. Embracing the constraints
+          and structure that Heroku provides means that you spend more time
+          architecting and building your product rather than your
+          operations. For a small team, this is invaluable.
+        </p>
+      </section>
+    </aside>
+    <article class="flexbox vleft auto-fadein">
+      <q>
+        Play with a net
+      </q>
+      <div class="author">
+        Robert Frost
+        <span class="disclaimer">...well, sort of</span>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <p>
+          A small spike on EC2 showed us vastly better performance, and
+          through some investigation, we were able to discern that
+          multi-tenancy on Heroku was killing us. There simply wasn't enough
+          CPU to go around to deliver consistent performance.
+        </p>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>Leaving Heroku</h2>
+    </hgroup>
+    <article class="build">
+      <p>
+        What's the low-hanging fruit to scaling this thing?
+      </p>
+      <ul>
+        <li>Postgres read slaves</li>
+        <li>DynamoDB</li>
+        <li>Services</li>
+      </ul>
+      <p>
+        Ultimately, the answer was to leave and run on EC2 directly.
+      </p>
+    </article>
+  </slide>
+
+  <slide id="two-simple-rules">
+    <hgroup>
+      <h2>Two Simple Rules</h2>
+    </hgroup>
+    <article class="build">
+      <div>
+        <h3>Developer-friendly</h3>
+        <ul>
+          <li>Heroku has turned us into little babies.</li>
+          <li>Devs should still wield power over their own ops.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>See everything</h3>
+        <ul>
+          <li>A failure in monitoring delayed our migration.</li>
+          <li>Ensure that we don't degrade during the change.</li>
+        </ul>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Four Areas of Concern</h2>
+    </hgroup>
+    <article>
+      <h3>Orchestration</h3>
+      <h3>Instance Management</h3>
+      <h3>Deployment</h3>
+      <h3>Monitoring & Logging</h3>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>AWS OpsWorks</h2>
+      <h3>Orchestration</h3>
+    </hgroup>
+    <article class="centered">
+      <img src="images/heroku_app_to_opsworks_stack.png">
+    </article>
+  </slide>
+
+  <slide>
+    <aside class="note">
+      <section>
+        <ul>
+          <li>
+            Since OpsWorks holds the running state and is easily queried,
+            there's no need to synchronize this data anywhere.
+          </li>
+          <li>
+            This was a great design decision espoused by Netflix's Asgard.
+          </li>
+        </ul>
+      </section>
+    </aside>
+    <hgroup>
+      <h2>AWS OpsWorks</h2>
+      <h3>Orchestration</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint">
+$ aws opsworks describe-stacks
+{
+  "Stacks": [
+    {
+      "Name": "groupme",
+      "StackId": "XXXXXX",
+      ...
+</pre>
+      <pre class="prettyprint">
+$ aws opsworks describe-instances --stack-id XXXXXX
+{
+  "Instances": [
+    {
+      "PublicDns": "ec2-55-55-555-555.compute-1.amazonaws.com",
+      ...
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>meta</h2>
+      <h3>Orchestration</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint">
+$ curl https://meta/apps/show/groupme
+{
+  "formation.app": "web=1",
+  "formation.worker": "worker=4",
+  "formation.consumer": "consumer=1",
+  ...
+}
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>AWS OpsWorks</h2>
+      <h3>Instance Management</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>OpsWorks is pre-baked with chef.</li>
+        <li>We provide custom cookbooks.</li>
+        <li>Chef is only run at setup and teardown.</li>
+        <li><a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments/">Immutable Infrastructure</a></li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article class="centered">
+      <img src="images/gun.png">
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>meta</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <pre class="prettyprint">
+$ curl https://meta/config_vars/show/groupme
+{
+  "RAILS_ENV": "production",
+  "REDIS_URL": "redis://ec2-44-44-444-444.amazonaws.com:6479/0",
+  "DATABASE_URL": "postgres://user:secret@ec2-66-66-666-666.amazonaws.com:5432/",
+  ...
+}
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>1. Upload formation</h3>
+      <h3>2. Upload config vars</h3>
+      <h3>3. Update app</h3>
+      <pre class="prettyprint">
+# git-based update
+$ git fetch origin && git reset --hard REF
+</pre>
+      <pre class="prettyprint">
+# slug-based update
+$ curl -s -o /tmp/SLUG https://anvil/slugs/SLUG
+$ tar x -C /tmp/app /tmp/SLUG
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>4. Start it up</h3>
+      <pre>
+exec su groupme -l -s /bin/bash -c  \
+  "rvm-exec default foreman start   \
+     -p $PORT                       \
+     -f /var/app/Procfile           \
+     -e /etc/app/env                \
+     -m $(cat /etc/app/formation) 2>&1" >> /var/log/app/app.log
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Monitoring &amp; Logging</h2>
+    </hgroup>
+    <article>
+      <h3>CopperEgg</h3>
+      <p>
+        Like Nagios, but with a nice UI. And you pay for the pleasure.
+      </p>
+      <h3>syslog-ng</h3>
+      <p>
+        A system of relay, archive, and spillway servers.
+      </p>
+    </article>
+  </slide>
+
+  <slide id="empty-road" class="segue fill nobackground" style="background-image: url(images/empty_road.jpg)">
+    <footer class="source"><span class="gray4">http://flic.kr/p/8ozBhZ</span></footer>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Private Heroku</h2>
+      <h3>What's next?</h3>
+    </hgroup>
+    <article>
+      <h3>A few seconds</h3>
+      <pre>
+$ heroku scale web=10 -a groupme
+</pre>
+
+      <h3>A few minutes</h3>
+      <pre>
+$ gun app:groupme instances.create:app, \
+    count=3,                            \
+    instance_type=c1.xlarge,            \
+    availability_zone=us-east-1a
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Containerization</h2>
+      <h3>What's next?</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>Docker</li>
+        <li>EC2 Backplane</li>
+        <li><a href="http://r.32k.io/adf">Software Delivery via Amazon Docker Workflow</a> by Ryan Smith</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun as a Service</h2>
+      <h3>What's next?</h3>
+    </hgroup>
+    <article>
+      <ul>
+        <li>CI Integration</li>
+        <li>Chat Ops</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide id="peace" class="segue dark nobackground">
+    <article class="flexbox vleft auto-fadein">
+      <h2>Peace</h2>
+    </article>
+    <p class="auto-fadein">
+      <a href="http://daveyeu.com/ops-at-groupme">daveyeu.com/ops-at-groupme</a>
+    </p>
+  </slide>
+
+  <slide class="backdrop"></slide>
+</slides>
+
+<script>
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-XXXXXXXX-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<!--[if IE]>
+  <script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+  <script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+</body>
+</html>
