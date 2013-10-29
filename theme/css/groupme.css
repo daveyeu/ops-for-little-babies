@@ -6,11 +6,19 @@ slide article h3 {
   font-weight: bold;
 }
 
+slide article p {
+  line-height: 150%;
+}
+
+slide article p.code-label {
+  margin-bottom: 10px;
+}
+
 slide article.centered {
   text-align: center;
 }
 
-slide#in-the-beginning div.build {
+slide#in-the-beginning div.build, slide#groupme-and-aws article div {
   margin-top: 130px;
   text-align: center;
 }
@@ -22,6 +30,11 @@ img#groupme-logo {
 img#heroku-logo {
   display: inline-block;
   margin-bottom: 40px;
+}
+
+img#aws-logo {
+  display: inline-block;
+  margin-bottom: 30px;
 }
 
 span.disclaimer {

@@ -54,35 +54,44 @@ URL: https://code.google.com/p/io-2012-slides
     <hgroup>
       <h2>Growing with Heroku</h2>
     </hgroup>
-    <article>
-      <ul>
-        <li>Forking &amp; following databases</li>
-        <li>Procfile</li>
-        <li>Polyglot</li>
-        <li>Logplex</li>
-      </ul>
+    <article class="build">
+      <p>We need high-availability databases and read slaves!</p>
+      <h3 style="color: green;">Fork & Follow</h3>
     </article>
   </slide>
 
-  <slide class="segue dark quote nobackground">
-    <aside class="note">
-      <section>
-        <p>
-          Ultimately, I don't believe that GroupMe could have moved so
-          rapidly in the beginning without Heroku. Embracing the constraints
-          and structure that Heroku provides means that you spend more time
-          architecting and building your product rather than your
-          operations. For a small team, this is invaluable.
-        </p>
-      </section>
-    </aside>
-    <article class="flexbox vleft auto-fadein">
-      <q>
-        Play with a net
-      </q>
-      <div class="author">
-        Robert Frost
-        <span class="disclaimer">...well, sort of</span>
+  <slide>
+    <hgroup>
+      <h2>Growing with Heroku</h2>
+    </hgroup>
+    <article>
+      <p>We want custom high-speed background workers!</p>
+      <div class="build">
+        <h3 style="color: green;">Procfile</h3>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Growing with Heroku</h2>
+    </hgroup>
+    <article>
+      <p>Log archives and metrics would be nice.</p>
+      <div class="build">
+        <h3 style="color: green;">Logplex</h3>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Growing with Heroku</h2>
+    </hgroup>
+    <article>
+      <p>Ruby's too slow!</p>
+      <div class="build">
+        <h3 style="color: green;">Polyglot</h3>
       </div>
     </article>
   </slide>
@@ -113,6 +122,29 @@ URL: https://code.google.com/p/io-2012-slides
       <p>
         Ultimately, the answer was to leave and run on EC2 directly.
       </p>
+    </article>
+  </slide>
+
+  <slide class="segue dark quote nobackground">
+    <aside class="note">
+      <section>
+        <p>
+          Ultimately, I don't believe that GroupMe could have moved so
+          rapidly in the beginning without Heroku. Embracing the constraints
+          and structure that Heroku provides means that you spend more time
+          architecting and building your product rather than your
+          operations. For a small team, this is invaluable.
+        </p>
+      </section>
+    </aside>
+    <article class="flexbox vleft auto-fadein">
+      <q>
+        Play with a net
+      </q>
+      <div class="author">
+        Robert Frost
+        <span class="disclaimer">...well, sort of</span>
+      </div>
     </article>
   </slide>
 
@@ -153,6 +185,106 @@ URL: https://code.google.com/p/io-2012-slides
 
   <slide>
     <hgroup>
+      <h2>Four Areas of Concern</h2>
+    </hgroup>
+    <article>
+      <h3>Orchestration</h3>
+      <ul>
+        <li>Which instances are running which apps?</li>
+        <li>Need to create logical, addressable groups of instances.</li>
+        <li><a href="https://github.com/Netflix/asgard">Netflix's Asgard</a></li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Four Areas of Concern</h2>
+    </hgroup>
+    <article>
+      <h3>Instance Management</h3>
+      <ul>
+        <li>Setup EC2 instances to run apps.</li>
+        <li>Chef, Puppet, etc.</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Four Areas of Concern</h2>
+    </hgroup>
+    <article>
+      <h3>Deployment</h3>
+      <ul>
+        <li>Package-based? Source-based?</li>
+        <li>Capistrano</li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Four Areas of Concern</h2>
+    </hgroup>
+    <article>
+      <h3>Monitoring & Logging</h3>
+      <ul>
+        <li>Real-time metrics for system and application health.</li>
+        <li>Archives for troubleshooting.</li>
+        <li>Nagios, Sensu</li>
+        <li>Graphite, Librato</li>
+        <li><a href="https://github.com/ryandotsmith/l2met">l2met</a></li>
+      </ul>
+    </article>
+  </slide>
+
+  <slide id="groupme-and-aws">
+    <article>
+      <div>
+        <img id="groupme-logo" src="images/poundie.png" width="256px" height="296px">
+        <img id="aws-logo" src="images/aws.gif" width="300px" height="225px">
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>AWS OpsWorks</h2>
+      <h3>Orchestration</h3>
+    </hgroup>
+    <article>
+      <p>
+        OpsWorks gives us logical
+        containers: <span class="blue">stacks</span>
+        and <span class="blue">layers</span>.
+      </p>
+      <p>
+        These map nicely to Heroku
+        <span class="blue">apps</span>
+        and <span class="blue">Procfiles</span>.
+      </p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>AWS OpsWorks</h2>
+      <h3>Orchestration</h3>
+    </hgroup>
+    <article>
+      <pre>
+$ cat Procfile
+
+web:      bundle exec unicorn -c ./config/unicorn.rb
+worker:   bundle exec rake resque:work INTERVAL=0.1 QUEUE=*
+consumer: bundle exec rake consumer
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
       <h2>AWS OpsWorks</h2>
       <h3>Orchestration</h3>
     </hgroup>
@@ -162,19 +294,6 @@ URL: https://code.google.com/p/io-2012-slides
   </slide>
 
   <slide>
-    <aside class="note">
-      <section>
-        <ul>
-          <li>
-            Since OpsWorks holds the running state and is easily queried,
-            there's no need to synchronize this data anywhere.
-          </li>
-          <li>
-            This was a great design decision espoused by Netflix's Asgard.
-          </li>
-        </ul>
-      </section>
-    </aside>
     <hgroup>
       <h2>AWS OpsWorks</h2>
       <h3>Orchestration</h3>
@@ -202,34 +321,54 @@ $ aws opsworks describe-instances --stack-id XXXXXX
 
   <slide>
     <hgroup>
-      <h2>meta</h2>
+      <h2>AWS OpsWorks</h2>
       <h3>Orchestration</h3>
     </hgroup>
     <article>
-      <pre class="prettyprint">
-$ curl https://meta/apps/show/groupme
-{
-  "formation.app": "web=1",
-  "formation.worker": "worker=4",
-  "formation.consumer": "consumer=1",
-  ...
-}
-</pre>
+      <p>
+        Since OpsWorks holds the running state and is easily queried,
+        there's no need to synchronize this data anywhere.
+      </p>
+      <p>
+        This was a great design decision espoused by Netflix's Asgard.
+      </p>
     </article>
   </slide>
 
   <slide>
     <hgroup>
-      <h2>AWS OpsWorks</h2>
+      <h2>Chef</h2>
       <h3>Instance Management</h3>
     </hgroup>
     <article>
+      <p>OpsWorks is pre-baked with Chef.</p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chef</h2>
+      <h3>Instance Management</h3>
+    </hgroup>
+    <article>
+      <p>We provide custom cookbooks.</p>
       <ul>
-        <li>OpsWorks is pre-baked with chef.</li>
-        <li>We provide custom cookbooks.</li>
-        <li>Chef is only run at setup and teardown.</li>
-        <li><a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments/">Immutable Infrastructure</a></li>
+        <li>rvm & ruby</li>
+        <li>node.js and npm</li>
+        <li>nginx</li>
+        <li>syslog-ng</li>
       </ul>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Chef</h2>
+      <h3>Instance Management</h3>
+    </hgroup>
+    <article>
+      <p>Chef is only run at setup and teardown.</p>
+      <p><a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments/">Immutable Infrastructure</a></p>
     </article>
   </slide>
 
@@ -245,19 +384,25 @@ $ curl https://meta/apps/show/groupme
 
   <slide>
     <hgroup>
-      <h2>meta</h2>
+      <h2>gun</h2>
       <h3>Deployment</h3>
     </hgroup>
-    <article>
-      <pre class="prettyprint">
-$ curl https://meta/config_vars/show/groupme
-{
-  "RAILS_ENV": "production",
-  "REDIS_URL": "redis://ec2-44-44-444-444.amazonaws.com:6479/0",
-  "DATABASE_URL": "postgres://user:secret@ec2-66-66-666-666.amazonaws.com:5432/",
-  ...
-}
+    <article class="build">
+      <h3>1. Upload formation</h3>
+      <p>
+        The formation tells us what process to run, and how many.
+      </p>
+      <div>
+        <p class="code-label">On Heroku, it sort of looks like this:</p>
+        <pre>
+$ heroku scale <b>web=10</b> -a groupme
+Scaling web dynos... done, now running 10
 </pre>
+      </div>
+      <p>
+        On OpsWorks, we map layers to formations. So in turn, that maps
+        Procfile processes to EC2 instances.
+      </p>
     </article>
   </slide>
 
@@ -268,14 +413,126 @@ $ curl https://meta/config_vars/show/groupme
     </hgroup>
     <article>
       <h3>1. Upload formation</h3>
-      <h3>2. Upload config vars</h3>
-      <h3>3. Update app</h3>
-      <pre class="prettyprint">
-# git-based update
-$ git fetch origin && git reset --hard REF
+      <div class="columns-2">
+        <div>
+          <p>
+            The mapping is maintained by a little app
+            called <span class="blue">meta</span>.
+          </p>
+          <p>
+            Basically, a simple REST interface on top of DynamoDB.
+          </p>
+        </div>
+        <div>
+          <img src="images/meta.png" width="475px" />
+        </div>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>1. Upload formation</h3>
+      <pre>
+$ curl https://<b>meta</b>/apps/show/groupme
+{
+  "formation.app":      "web=1",
+  "formation.worker":   "worker=4",
+  "formation.consumer": "consumer=1"
+  ...
+}
 </pre>
-      <pre class="prettyprint">
-# slug-based update
+      <pre>
+$ echo "web=1" > /etc/app/formation
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article class="build">
+      <h3>2. Upload config vars</h3>
+      <p>
+        Config vars provide runtime configuration.
+      </p>
+      <div>
+        <p class="code-label">From Heroku:</p>
+        <pre>
+$ heroku config -a groupme
+RAILS_ENV:       production
+REDIS_URL:       redis://ec2-123-123-10-1.compute-1.amazonaws.com:6379/0
+DATABASE_URL:    postgres://...
+</pre>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>2. Upload config vars</h3>
+      <p>
+        Once again, <span class="blue">meta</span> is in charge of this.
+      </p>
+      <pre>
+$ curl https://<b>meta</b>/config_vars/show/groupme
+{
+  "RAILS_ENV":    "production",
+  "REDIS_URL":    "redis://ec2-44-44-444-444.amazonaws.com:6479/0",
+  "DATABASE_URL": "postgres://user:secret@ec2-66-66-666-666.amazonaws.com:5432/",
+  ...
+}
+</pre>
+      <pre>
+$ echo "RAILS_ENV=..." > /etc/app/env
+</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>3. Update code</h3>
+      <div class="build">
+        <p>Here, we're currently using two approaches.</p>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>3. Update code</h3>
+      <p class="code-label">First, a pretty traditional remote git repo.</p>
+      <pre>$ git fetch origin && git reset --hard $REF</pre>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>gun</h2>
+      <h3>Deployment</h3>
+    </hgroup>
+    <article>
+      <h3>3. Update code</h3>
+      <p class="code-label">And also, a Heroku-style slug-based deploy.</p>
+      <pre>
 $ curl -s -o /tmp/SLUG https://anvil/slugs/SLUG
 $ tar x -C /tmp/app /tmp/SLUG
 </pre>
@@ -289,31 +546,109 @@ $ tar x -C /tmp/app /tmp/SLUG
     </hgroup>
     <article>
       <h3>4. Start it up</h3>
-      <pre>
+      <div class="build">
+        <div>
+          <p class="code-label">Upstart script snippet:</p>
+          <pre>
 exec su groupme -l -s /bin/bash -c  \
   "rvm-exec default foreman start   \
      -p $PORT                       \
-     -f /var/app/Procfile           \
+     -f /tmp/app/Procfile           \
      -e /etc/app/env                \
      -m $(cat /etc/app/formation) 2>&1" >> /var/log/app/app.log
 </pre>
+        </div>
+      </div>
     </article>
   </slide>
 
   <slide>
     <hgroup>
-      <h2>Monitoring &amp; Logging</h2>
+      <h2>gun</h2>
+      <h3>A quick aside</h3>
+    </hgroup>
+    <article>
+      <pre>
+$ gun deploy
+$ gun console
+$ gun console.db
+$ gun status
+$ gun instances
+$ gun logs
+$ gun ps.restart
+$ gun ssh.host
+$ gun git.compare
+</pre>
+        </div>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Spillway</h2>
+      <h3>Monitoring & Logging</h3>
+    </hgroup>
+    <article>
+      <p>
+        Inspired by l2met, this is an EventMachine HTTP server
+        that parses syslog-formatted logs and extracts metrics.
+      </p>
+      <p>
+        Those metrics are fed to statsd, and ultimately, graphite.
+      </p>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Spillway</h2>
+      <h3>Monitoring & Logging</h3>
+    </hgroup>
+    <article class="centered">
+      <img src="images/spillway.png" width="650px" />
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Spillway</h2>
+      <h3>Monitoring & Logging</h3>
+    </hgroup>
+    <article>
+      <div class="columns-2">
+        <div>
+          <p>Driven by <span class="blue">syslog-ng</span>.</p>
+          <p>Unfortunately, syslog-ng doesn't distribute well.</p>
+          <ul>
+            <li><a href="https://github.com/facebook/Scribe">Scribe</a></li>
+            <li><a href="https://cwiki.apache.org/confluence/display/FLUME/Home">Flume</a></li>
+          </ul>
+        </div>
+        <div>
+          <img src="images/syslog.png" width="450px" />
+        </div>
+      </div>
+    </article>
+  </slide>
+
+  <slide>
+    <hgroup>
+      <h2>Miscellany</h2>
+      <h3>Monitoring & Logging</h3>
     </hgroup>
     <article>
       <h3>CopperEgg</h3>
-      <p>
-        Like Nagios, but with a nice UI. And you pay for the pleasure.
-      </p>
-      <h3>syslog-ng</h3>
-      <p>
-        A system of relay, archive, and spillway servers.
-      </p>
+      <h3>PagerDuty</h3>
+      <h3>New Relic</h3>
     </article>
+  </slide>
+
+  <slide class="segue dark nobackground">
+    <hgroup class="auto-fadein">
+      <h2>And that's V1</h2>
+      <h3><span class="gray3">Please, hold your applause</span></h3>
+    </hgroup>
   </slide>
 
   <slide id="empty-road" class="segue fill nobackground" style="background-image: url(images/empty_road.jpg)">
@@ -373,7 +708,7 @@ $ gun app:groupme instances.create:app, \
       <h2>Peace</h2>
     </article>
     <p class="auto-fadein">
-      <a href="http://daveyeu.com/ops-at-groupme">daveyeu.com/ops-at-groupme</a>
+      <a href="http://daveyeu.com/ops-for-little-babies">daveyeu.com/ops-for-little-babies</a>
     </p>
   </slide>
 

@@ -1,11 +1,11 @@
 var SLIDE_CONFIG = {
   // Slide settings
   settings: {
-    title:    'Operations at GroupMe',
+    title:    'Operations for Little Babies',
     subtitle: '(╯°□°)╯︵ ┻━┻',
     eventInfo: {
-     title: 'hackNY Masters',
-     date:  '9/28/2013'
+     title: 'Pivotal Tech Talks',
+     date:  '2013-10-29'
     },
     useBuilds:        true, // Default: true. False will turn off slide animation builds.
     usePrettify:      true, // Default: true
